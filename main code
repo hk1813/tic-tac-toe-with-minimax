@@ -1,0 +1,119 @@
+def DisplayBoard(board):
+    print("Current State Of Board : \n\n")
+    for i in range (0,9):
+        if((i>0) and (i%3)==0):
+            print("\n")
+        if(board[i]==0):
+            print("- ",end=" ")
+        if (board[i]==1):
+            print("O ",end=" ")
+        if(board[i]==-1):    
+            print("X ",end=" ")
+    print("\n\n")
+
+def Player1(board):
+    position=input("Enter X's position from [1...9]: ")
+    position=int(position)
+    if(board[position-1]!=0):
+        print("Wrong Move!")
+        exit(0) 
+    board[position-1] = -1
+    
+def Player2(board):
+    position=input("Enter O's position from [1...9]: ")
+    position=int(position)
+    if(board[position-1]!=0):
+        print("Wrong Move!")
+        exit(0)
+    board[position-1] = 1 
+
+def minimax(board,player):
+    x=win_check(board)
+    if(x!=0):
+        return (x*player)
+    position=-1
+    value=-2
+    for i in range(0,9):
+        if(board[i]==0):
+            board[i]=player
+            score=-minimax(board,(player*-1))
+            if(score>value):
+                value=score
+                position=i
+            board[i]=0
+
+    if(position==-1):
+        return 0
+    return value
+    
+
+def Computer(board):
+    position=-1
+    value=-2
+    for i in range(0,9):
+        if(board[i]==0):
+            board[i]=1
+            score=-minimax(board, -1)
+            board[i]=0
+            if(score>value):
+                value=score
+                position=i
+ 
+    board[position]=1
+
+
+def win_check(board):
+    chk_board=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
+
+    for i in range(0,8):
+        if(board[chk_board[i][0]] != 0 and
+           board[chk_board[i][0]] == board[chk_board[i][1]] and
+           board[chk_board[i][0]] == board[chk_board[i][2]]):
+            return board[chk_board[i][2]]
+    return 0
+
+def main():
+    choice=input("Enter 1 for single player or Enter 2 for Two players: ")
+    choice=int(choice)
+    
+    # The broad is considered in the form of a single dimentional array.
+    # One player moves 1 and other move -1 i.e. one player choose O then anothe one is X .
+    
+    board=[0,0,0,0,0,0,0,0,0]
+    if(choice==1):
+        print("Computer : O & You : X")
+        player= input("Enter 1 to play (1st) or 2 for (2nd) : ")
+        player = int(player)
+        for i in range (0,9):
+            if(win_check(board)!=0):
+                break
+            if((i+player)%2==0):
+                Computer(board)
+            else:
+                DisplayBoard(board)
+                Player1(board)
+    else:
+        for i in range (0,9):
+            if(win_check(board)!=0):
+                break
+            if((i)%2==0):
+                DisplayBoard(board)
+                Player1(board)
+            else:
+                DisplayBoard(board)
+                Player2(board)
+         
+
+    x=win_check(board)
+    if(x==0):
+         DisplayBoard(board)
+         print("Draw! The match , No one win!")
+    if(x==-1):
+         DisplayBoard(board)
+         print("X Wins! & O Loose!")
+    if(x==1):
+         DisplayBoard(board)
+         print("X Loose! & O Wins!")
+       
+
+main()
